@@ -19,10 +19,17 @@ function errorHandler(err, req, res, next) {
   } else if (err.name === 'CastError') {
     statusCode = 400;
     message = 'Invalid value for ' + err.path;
+  } else if (Number.isInteger(err.statusCode) && err.statusCode >= 400 && err.statusCode < 500) {
+    statusCode = err.statusCode;
+    message = err.message || 'Request failed';
   } else if (err.status === 400) {
     statusCode = 400;
     message = 'Invalid request body';
   }
+
+  if (statusCode === 500) {
+  console.error('Unhandled server error:', err);
+}
 
   res.status(statusCode).json({ message });
 }
