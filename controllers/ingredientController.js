@@ -64,6 +64,11 @@ async function updateIngredient(req, res, next) {
   if (!data) {
     return res.status(400).json({ message: 'Request body must be a JSON object' });
   }
+  if (Object.prototype.hasOwnProperty.call(data, 'stockQuantity')) {
+    return res.status(400).json({
+      message: 'Stock quantity must be changed through inventory operations',
+    });
+  }
   try {
     const record = await Ingredient.findById(req.params.id);
     if (!record) {
@@ -104,4 +109,3 @@ module.exports = {
   updateIngredient,
   deleteIngredient,
 };
-

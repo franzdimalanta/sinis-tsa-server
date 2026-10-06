@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const MenuItem = require('../models/MenuItem');
 const Category = require('../models/Category');
 const Recipe = require('../models/Recipe');
+const inventoryService = require('../services/inventoryService');
 
 const allowedFields = ["name","description","category","sizes","isActive"];
 
@@ -134,7 +135,16 @@ async function deleteMenuItem(req, res, next) {
   }
 }
 
+async function getMenuItemAvailability(req, res, next) {
+  try {
+    res.status(200).json(await inventoryService.getMenuItemAvailability(req.params.id));
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
+  getMenuItemAvailability,
   getMenuItems,
   getMenuItemById,
   createMenuItem,
