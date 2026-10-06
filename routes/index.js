@@ -5,6 +5,7 @@ const ingredientRoutes = require('./ingredientRoutes');
 const recipeRoutes = require('./recipeRoutes');
 const orderRoutes = require('./orderRoutes');
 const inventoryRoutes = require('./inventoryRoutes');
+const analyticsRoutes = require('./analyticsRoutes');
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.use('/ingredients', ingredientRoutes);
 router.use('/recipes', recipeRoutes);
 router.use('/orders', orderRoutes);
 router.use('/inventory', inventoryRoutes);
+router.use('/analytics', analyticsRoutes);
 
 module.exports = router;
