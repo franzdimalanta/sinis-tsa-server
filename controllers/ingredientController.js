@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Ingredient = require('../models/Ingredient');
 const Recipe = require('../models/Recipe');
+const InventoryTransaction = require('../models/InventoryTransaction');
 
 const allowedFields = ["name","unit","stockQuantity","reorderLevel","isActive"];
 
@@ -94,6 +95,9 @@ async function deleteIngredient(req, res, next) {
     }
     if (await Recipe.exists({ 'ingredients.ingredient': req.params.id })) {
       return res.status(400).json({ message: 'Cannot delete ingredient because it is used by recipes' });
+    }
+    if (await InventoryTransaction.exists({ ingredient: req.params.id })) {
+      return res.status(400).json({ message: 'Cannot delete ingredient because it has inventory transaction history' });
     }
     await record.deleteOne();
     res.status(200).json({ message: 'Ingredient deleted successfully' });

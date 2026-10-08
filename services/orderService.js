@@ -20,6 +20,30 @@ const statusTransitions = {
   cancelled: [],
 };
 
+function normalizeOrderItems(requestedItems) {
+  const lines = new Map();
+  for (const requested of requestedItems) {
+    if (!requested || typeof requested.menuItem !== 'string' || !mongoose.isValidObjectId(requested.menuItem)) {
+      throw serviceError('Each order item must have a valid menu item ObjectId');
+    }
+    if (!Number.isSafeInteger(requested.quantity) || requested.quantity < 1) {
+      throw serviceError('Order item quantity must be a positive integer');
+    }
+    if (!['small', 'medium', 'large'].includes(requested.size)) {
+      throw serviceError('Order item size must be small, medium, or large');
+    }
+    // Canonical IDs also merge equivalent ObjectIds with different letter casing.
+    const menuItem = new mongoose.Types.ObjectId(requested.menuItem).toHexString();
+    const key = `${menuItem}:${requested.size}`;
+    const quantity = (lines.get(key)?.quantity || 0) + requested.quantity;
+    if (!Number.isSafeInteger(quantity)) {
+      throw serviceError('Combined order item quantity must be a positive safe integer');
+    }
+    lines.set(key, { menuItem, size: requested.size, quantity });
+  }
+  return [...lines.values()];
+}
+
 // Recipes determine requirements only for preview and order creation.
 async function aggregateRequirements(items, session = null) {
   const requirements = new Map();
@@ -45,6 +69,9 @@ async function aggregateRequirements(items, session = null) {
     if (!ingredient) {
       throw serviceError(`Referenced ingredient ${id} does not exist`);
     }
+    if (!ingredient.isActive) {
+      throw serviceError(`${ingredient.name} is not active`);
+    }
     result.push({ ingredient: ingredient._id, name: ingredient.name, unit: ingredient.unit,
       quantity, stockQuantity: ingredient.stockQuantity });
   }
@@ -62,13 +89,7 @@ async function prepareOrder(body, session = null) {
     throw serviceError('An order must have at least one item');
   }
   const items = [];
-  for (const requested of body.items) {
-    if (!requested || typeof requested.menuItem !== 'string' || !mongoose.isValidObjectId(requested.menuItem)) {
-      throw serviceError('Each order item must have a valid menu item ObjectId');
-    }
-    if (!Number.isSafeInteger(requested.quantity) || requested.quantity < 1) {
-      throw serviceError('Order item quantity must be a positive integer');
-    }
+  for (const requested of normalizeOrderItems(body.items)) {
     const menuItem = await MenuItem.findById(requested.menuItem).session(session);
     if (!menuItem) throw serviceError('Referenced menu item does not exist');
     if (!menuItem.isActive) throw serviceError(`${menuItem.name} is not active`);

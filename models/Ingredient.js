@@ -19,4 +19,8 @@ const ingredientSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
+for (const field of ['stockQuantity', 'reorderLevel']) {
+  ingredientSchema.path(field).validate(Number.isFinite, `${field} must be a finite number.`);
+}
+
 module.exports = mongoose.model('Ingredient', ingredientSchema);

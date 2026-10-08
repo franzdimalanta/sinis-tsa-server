@@ -15,8 +15,8 @@ const inventoryTransactionSchema = new mongoose.Schema({
     type: Number,
     required: true,
     validate: {
-      validator: (quantity) => quantity > 0,
-      message: 'Transaction quantity must be greater than 0.',
+      validator: (quantity) => Number.isFinite(quantity) && quantity > 0,
+      message: 'Transaction quantity must be a finite number greater than 0.',
     },
   },
   reason: { type: String, required: true, trim: true, maxlength: 300 },

@@ -59,4 +59,11 @@ const orderSchema = new mongoose.Schema({
   notes: { type: String, trim: true, maxlength: 500, default: '' },
 }, { timestamps: true });
 
+for (const field of ['quantity', 'unitPrice', 'lineTotal']) {
+  orderItemSchema.path(field).validate(Number.isFinite, `${field} must be a finite number.`);
+}
+for (const field of ['subtotal', 'discountAmount', 'total']) {
+  orderSchema.path(field).validate(Number.isFinite, `${field} must be a finite number.`);
+}
+
 module.exports = mongoose.model('Order', orderSchema);

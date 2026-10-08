@@ -47,4 +47,6 @@ const menuItemSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
+sizeSchema.path('price').validate(Number.isFinite, 'Price must be a finite number.');
+
 module.exports = mongoose.model('MenuItem', menuItemSchema);
