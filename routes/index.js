@@ -10,7 +10,7 @@ const analyticsRoutes = require('./analyticsRoutes');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.json({ message: 'BrewLogic API' });
+  res.json({ message: 'SINIS TSA API' });
 });
 
 router.use('/categories', categoryRoutes);

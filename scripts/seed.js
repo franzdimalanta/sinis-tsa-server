@@ -157,7 +157,7 @@ async function seedRecords(session) {
 async function main() {
   if (!process.argv.slice(2).includes('--reset')) {
     console.log('No data changed. Reset requires: npm run seed -- --reset');
-    console.log('Warning: --reset replaces all records in the six BrewLogic collections.');
+    console.log('Warning: --reset replaces all records in the six application collections.');
     return;
   }
   let session;
@@ -173,11 +173,11 @@ async function main() {
     session = await mongoose.startSession();
     let summary;
     await session.withTransaction(async () => { summary = await seedRecords(session); });
-    console.log('BrewLogic seed completed:');
+    console.log('SINIS TSA seed completed:');
     for (const [label, count] of Object.entries(summary)) console.log(`${label}: ${count}`);
   } catch (error) {
     // Avoid logging connection errors that may contain credentials or a connection URI.
-    console.error(`BrewLogic seed failed (${error.name || 'Error'}). Reset was not committed. Check connectivity, transaction support, and model validation.`);
+    console.error(`SINIS TSA seed failed (${error.name || 'Error'}). Reset was not committed. Check connectivity, transaction support, and model validation.`);
     process.exitCode = 1;
   } finally {
     try {
@@ -190,7 +190,7 @@ async function main() {
 
 if (require.main === module) {
   main().catch(() => {
-    console.error('BrewLogic seed cleanup failed.');
+    console.error('SINIS TSA seed cleanup failed.');
     process.exitCode = 1;
   });
 }

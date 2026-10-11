@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.get('/api/health', (req, res) => {
-  res.json({ message: 'BrewLogic API is running' });
+  res.json({ message: 'SINIS TSA API is running' });
 });
 
 app.use('/api', routes);

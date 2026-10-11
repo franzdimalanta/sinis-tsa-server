@@ -9,7 +9,7 @@ async function startServer() {
   await connectDB();
 
   app.listen(PORT, () => {
-    console.log(`BrewLogic server is running on port ${PORT}`);
+    console.log(`SINIS TSA server is running on port ${PORT}`);
   });
 }
 
